@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:v/view/about.dart';
 import 'package:v/view/hide_message.dart';
@@ -19,7 +21,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'VisionCrypt',
+        title: 'Secret Pixel',
         theme: ThemeData(
           brightness: Brightness.dark,
           inputDecorationTheme: InputDecorationTheme(
@@ -51,7 +53,13 @@ class MyApp extends StatelessWidget {
             case '/revealMsg':
               return createRoute(RevealMessage());
             case '/hideFile':
-              return createRoute(HideFile());
+              if (settings.arguments is File) {
+                final image = settings.arguments as File;
+                return createRoute(HideFile(
+                  image: image,
+                ));
+              }
+              return createRoute(HomeView());
             case '/about':
               return createRoute(About());
             case '/setting':

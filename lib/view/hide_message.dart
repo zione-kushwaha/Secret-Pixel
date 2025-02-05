@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:v/core/pick_image.dart';
 
@@ -11,7 +13,7 @@ class HideMessage extends StatefulWidget {
 class _HideMessageState extends State<HideMessage> {
   final TextEditingController messageController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  Image? selectedImage;
+  File? selectedImage;
   bool _isPasswordVisible = false;
 
   @override
@@ -60,7 +62,7 @@ class _HideMessageState extends State<HideMessage> {
                     SizedBox(
                       height: 200,
                       width: double.infinity,
-                      child: selectedImage!,
+                      child: Image.file(selectedImage!),
                     ),
                     SizedBox(height: 20),
                     TextField(
@@ -126,7 +128,8 @@ class _HideMessageState extends State<HideMessage> {
                     GestureDetector(
                       onTap: () {
                         if (selectedImage != null) {
-                          Navigator.pushNamed(context, '/hideFile');
+                          Navigator.pushNamed(context, '/hideFile',
+                              arguments: selectedImage!);
                         }
                       },
                       child: Container(
@@ -150,7 +153,7 @@ class _HideMessageState extends State<HideMessage> {
           final image = await Pick.pickImage();
           if (image != null) {
             setState(() {
-              selectedImage = Image.file(image);
+              selectedImage = image;
             });
           }
         },
