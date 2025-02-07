@@ -46,7 +46,7 @@ class About extends StatelessWidget {
               leading: CircleAvatar(
                 backgroundImage: AssetImage('assets/profile/dipesh.jpg'),
               ),
-              title: Text('Dipesh prasad Acharya'),
+              title: Text('Dipesh Prasad Acharya'),
             ),
             ListTile(
               onTap: () => launch("https://www.linkedin.com/in/zi-one"),
@@ -56,8 +56,12 @@ class About extends StatelessWidget {
               title: Text('Jeevan Kumar Kushwaha'),
             ),
             ListTile(
+              onTap: () async {
+                await launch(
+                    "https://www.linkedin.com/in/priyanka-mishra-911a3a34a?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app");
+              },
               leading: CircleAvatar(
-                backgroundImage: AssetImage('assets/images/logo.png'),
+                backgroundImage: AssetImage('assets/profile/priyanka.jpg'),
               ),
               title: Text('Priyanka Kumari Mishra'),
             ),
@@ -76,13 +80,29 @@ class About extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
-                    onPressed: () {}, icon: Icon(FontAwesomeIcons.globe)),
+                    onPressed: () async {
+                      await launch("https://secretpixel.tech");
+                    },
+                    icon: Icon(FontAwesomeIcons.globe)),
                 IconButton(onPressed: () {}, icon: Icon(Icons.api)),
-                IconButton(onPressed: () {}, icon: Icon(Icons.facebook)),
                 IconButton(
-                    onPressed: () {}, icon: Icon(FontAwesomeIcons.instagram)),
+                    onPressed: () async {
+                      await launch(
+                          "https://www.facebook.com/share/18as3zZes8/");
+                    },
+                    icon: Icon(Icons.facebook)),
                 IconButton(
-                    onPressed: () {}, icon: Icon(FontAwesomeIcons.twitter)),
+                    onPressed: () async {
+                      await launch(
+                          "https://www.instagram.com/secretpixel_?igsh=MWc0MDdkMGQ5MnlucQ==");
+                    },
+                    icon: Icon(FontAwesomeIcons.instagram)),
+                IconButton(
+                    onPressed: () async {
+                      await launch(
+                          "https://x.com/secret_pixel_?t=2Z7Lawvglsk9yc2iCM5kMQ&s=08");
+                    },
+                    icon: Icon(FontAwesomeIcons.twitter)),
               ],
             ),
             Align(

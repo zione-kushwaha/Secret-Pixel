@@ -1,14 +1,14 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:v/network/make_request.dart';
 
 class HideFile extends StatefulWidget {
-  const HideFile({super.key, required this.image});
-  final File image;
+  const HideFile(
+      {super.key, required this.selectedImage, required this.selectedFile});
+  final File selectedImage;
+  final File selectedFile;
 
   @override
   _HideFileState createState() => _HideFileState();
@@ -16,15 +16,14 @@ class HideFile extends StatefulWidget {
 
 class _HideFileState extends State<HideFile> {
   final TextEditingController passwordController = TextEditingController();
-  File? selectedFile;
+
   bool _isPasswordVisible = false;
-  String? DownloadLink = '';
+  String downloadLink = '';
   bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    print(widget.image);
   }
 
   @override
@@ -45,145 +44,100 @@ class _HideFileState extends State<HideFile> {
             icon: const Icon(Icons.refresh),
             onPressed: () {
               passwordController.clear();
-              setState(() {
-                selectedFile = null;
-              });
+              Navigator.pop(context);
             },
           ),
         ],
       ),
-      body: LoaderOverlay(
-        overlayColor: Colors.transparent.withOpacity(0.5),
-        useDefaultLoading: false,
-        overlayWidgetBuilder: (_) {
-          return Center(
-            child: SpinKitCubeGrid(
-              color: Colors.white,
-              size: 50.0,
-            ),
-          );
-        },
-        child: Stack(
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (selectedFile == null)
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height / 1.2,
-                      child: Center(
-                        child: Text(
-                          "Add a File to Start Encoding.",
-                          style: TextStyle(fontSize: 24, color: Colors.white),
-                          textAlign: TextAlign.center,
-                        ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Selected ${widget.selectedFile}',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+                SizedBox(height: 20),
+                TextField(
+                  controller: passwordController,
+                  obscureText: !_isPasswordVisible,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    labelText: 'Password (Optional)',
+                    hintText: 'Enter a password',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                       ),
-                    )
-                  else
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Selected $selectedFile',
-                          style: TextStyle(fontSize: 18, color: Colors.white),
-                        ),
-                        SizedBox(height: 20),
-                        TextField(
-                          controller: passwordController,
-                          obscureText: !_isPasswordVisible,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            labelText: 'Password (Optional)',
-                            hintText: 'Enter a password',
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _isPasswordVisible
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _isPasswordVisible = !_isPasswordVisible;
-                                });
-                              },
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        GestureDetector(
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                GestureDetector(
+                  onTap: () async {
+                    context.loaderOverlay.show();
+                    print('we are uploading the file to server to encode');
+                    downloadLink = await MakeRequest().uploadFiles(
+                          message: 'Checking the Api',
+                          file: widget.selectedFile,
+                          image: widget.selectedImage,
+                        ) ??
+                        '';
+                    print('downloadLink: $downloadLink');
+                    print(downloadLink);
+                    context.loaderOverlay.hide();
+                    setState(() {});
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    child: Text('Hide Message In File',
+                        style: TextStyle(color: Colors.black)),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height / 5),
+                downloadLink.length > 1
+                    ? Align(
+                        alignment: Alignment.center,
+                        child: GestureDetector(
                           onTap: () async {
                             context.loaderOverlay.show();
-                            DownloadLink = await MakeRequest().uploadFiles(
-                              message: 'Checking the Api',
-                              file: selectedFile!,
-                              image: File(widget.image.path),
-                            );
+                            await MakeRequest().downloadFile(downloadLink!);
                             context.loaderOverlay.hide();
-                            setState(() {});
                           },
                           child: Container(
                             padding: EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 5),
-                            child: Text('Hide Message In File',
-                                style: TextStyle(color: Colors.black)),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
                             ),
+                            child: Text('Download File',
+                                style: TextStyle(color: Colors.black)),
                           ),
                         ),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height / 5),
-                        DownloadLink!.length > 1
-                            ? Align(
-                                alignment: Alignment.center,
-                                child: GestureDetector(
-                                  onTap: () async {
-                                    await MakeRequest()
-                                        .downloadFile(DownloadLink!);
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 5),
-                                    child: Text('Download File',
-                                        style: TextStyle(color: Colors.black)),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : Container(),
-                      ],
-                    ),
-                ],
-              ),
+                      )
+                    : Container(),
+              ],
             ),
-            if (context.loaderOverlay.visible)
-              Container(
-                color: Colors.black.withOpacity(0.5),
-              ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.white,
-        onPressed: () async {
-          FilePickerResult? result = await FilePicker.platform.pickFiles();
-          if (result != null) {
-            setState(() {
-              selectedFile = File(result.files.single.path!);
-            });
-          } else {
-            // User canceled the picker
-          }
-        },
-        child: const Icon(Icons.file_copy, color: Colors.black),
       ),
     );
   }

@@ -11,4 +11,14 @@ class Pick {
     }
     return null;
   }
+
+  //function to open camera
+  static Future<File?> openCamera() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      return File(pickedFile.path);
+    }
+    return null;
+  }
 }

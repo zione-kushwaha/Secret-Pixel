@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:gallery_saver/gallery_saver.dart';
+import 'package:path_provider/path_provider.dart';
 
 class MakeRequest {
   final Dio _dio = Dio();
-  final String encodeUrl = "https://visioncrypt.pythonanywhere.com/api/encode/";
-  final String decodeUrl = "https://visioncrypt.pythonanywhere.com/api/decode/";
+  final String encodeUrl = "https://secretpixel.tech/api/encode/";
+  final String decodeUrl = "https://secretpixel.tech/api/decode/";
 
   Future<String?> uploadFiles(
       {required String message,
@@ -12,6 +14,8 @@ class MakeRequest {
       required File image}) async {
     print('File path: ${file.path}');
     print('Image path: ${image.path}');
+
+    print('file is being uploaded');
 
     if (!file.existsSync() || !image.existsSync()) {
       print('One or both files do not exist');
@@ -25,9 +29,10 @@ class MakeRequest {
       'Image': await MultipartFile.fromFile(image.path,
           filename: image.path.split('/').last),
     });
-
+    print(formData.fields);
     try {
       Response response = await _dio.post(encodeUrl, data: formData);
+      print(response);
 
       if (response.statusCode == 200) {
         print('Upload successful');
@@ -63,7 +68,7 @@ class MakeRequest {
       if (response.statusCode == 200) {
         print('Decode successful');
         print('Response data: ${response.data}');
-        return response.data['Message'];
+        return response.data['DecodedFile'];
       } else {
         print('Decode failed with status: ${response.statusCode}');
         return null;
@@ -74,15 +79,33 @@ class MakeRequest {
     }
   }
 
-  //functino to download the file
   Future<bool> downloadFile(String url) async {
     try {
-      Response response = await _dio.get(url);
+      // Get the temporary directory to save the file
+      Directory tempDir = await getTemporaryDirectory();
+      String tempPath = '${tempDir.path}/downloaded_file.jpg';
+
+      // Download the file
+      Response response = await _dio.download(url, tempPath);
 
       if (response.statusCode == 200) {
         print('Download successful');
-        print('Response data: ${response.data}');
-        return true;
+        print('File saved to: $tempPath');
+
+        // Save the file to the gallery
+        bool? result = await GallerySaver.saveImage(tempPath, albumName: 'Amu');
+        if (result == true) {
+          print('File saved to gallery');
+
+          // Delete the temporary file
+          File(tempPath).deleteSync();
+          print('Temporary file deleted');
+
+          return true;
+        } else {
+          print('Failed to save file to gallery');
+          return false;
+        }
       } else {
         print('Download failed with status: ${response.statusCode}');
         return false;

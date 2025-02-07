@@ -68,3 +68,33 @@ class Setting extends StatelessWidget {
     );
   }
 }
+
+  // void _openCamera() async {
+  //   ImagePicker imagePicker = ImagePicker();
+  //   XFile? pickedImage = await imagePicker.pickImage(
+  //     source: ImageSource.camera,
+  //   );
+  //   if (pickedImage != null) {
+  //     File image = File(pickedImage.path);
+  //     await saveImage(image);
+  //     // Reload images after adding a new one.
+  //     setState(() {});
+  //   }
+  // }
+
+  // Future<void> saveImage(File image) async {
+  //   // Implement your save image logic here
+  // }
+
+  // void _openGallery() async {
+  //   ImagePicker imagePicker = ImagePicker();
+  //   XFile? pickedImage = await imagePicker.pickImage(
+  //     source: ImageSource.gallery,
+  //   );
+  //   if (pickedImage != null) {
+  //     File image = File(pickedImage.path);
+  //     await saveImage(image);
+  //     // Reload images after adding a new one.
+  //     setState(() {});
+  //   }
+  // }

@@ -1,4 +1,4 @@
-package com.example.v
+package com.secretpixel
 
 import io.flutter.embedding.android.FlutterActivity
 

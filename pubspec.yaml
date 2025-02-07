@@ -42,11 +42,28 @@ dependencies:
   url_launcher: ^6.3.1
   loader_overlay: ^5.0.0
   flutter_spinkit: ^5.2.1
+  path_provider: ^2.1.5
+  gallery_saver: ^2.3.2
+  shared_preferences: ^2.5.1
+  flutter_speed_dial: ^7.0.0
+  flutter_animate: ^4.5.2
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.11.0
   flutter_test:
     sdk: flutter
 
+flutter_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/images/logo.png"
+  web:
+    generate: true
+  windows:
+    generate: true
+  macos:
+    generate: true
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
