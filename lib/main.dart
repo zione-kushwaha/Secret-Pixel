@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:v/new/home_view.dart';
 import 'package:v/view/about.dart';
 import 'package:v/view/hide_message.dart';
 import 'package:v/view/home_view.dart';
@@ -55,16 +56,28 @@ class MyApp extends StatelessWidget {
               ),
             ),
           ),
-          home: HomeView(),
+          home: NewHomeView(),
           onGenerateRoute: (settings) {
             switch (settings.name) {
               case '/':
                 return createRoute(HomeView());
 
               case '/hideMsg':
-                return createRoute(HideMessage());
+                if (settings.arguments != null) {
+                  return createRoute(
+                      HideMessage(selectedImage: settings.arguments as File));
+                } else {
+                  return createRoute(HomeView());
+                }
+
               case '/revealMsg':
-                return createRoute(RevealMessage());
+                if (settings.arguments != null) {
+                  return createRoute(RevealMessage(
+                    selectedImage: settings.arguments as File,
+                  ));
+                } else {
+                  return createRoute(HomeView());
+                }
 
               case '/about':
                 return createRoute(About());
@@ -88,10 +101,10 @@ PageRouteBuilder createRoute(Widget destination) {
     },
     transitionsBuilder: (BuildContext context, Animation<double> animation,
         Animation<double> secondaryAnimation, Widget child) {
-      return ScaleTransition(
-        scale: Tween<double>(
-          begin: 0.0,
-          end: 1.0,
+      return SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0.0, 1.0),
+          end: Offset.zero,
         ).animate(
           CurvedAnimation(
             parent: animation,

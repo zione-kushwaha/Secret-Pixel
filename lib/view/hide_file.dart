@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:v/network/make_request.dart';
 
@@ -100,6 +99,20 @@ class _HideFileState extends State<HideFile> {
                     print(downloadLink);
                     context.loaderOverlay.hide();
                     setState(() {});
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        margin: EdgeInsets.symmetric(
+                            horizontal: MediaQuery.of(context).size.width / 10),
+                        content: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Downloaded Successfully',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ),
+                    );
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
